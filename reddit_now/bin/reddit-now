@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require "./lib/reddit_now"
+
+
+RedditNow::CLI.new.call
+
