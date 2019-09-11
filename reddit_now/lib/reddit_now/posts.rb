@@ -1,16 +1,35 @@
 class RedditNow::Posts
-  attr_accessor :title, :upvote, :user, :url
+  attr_accessor :title, :upvote, :user, :url, :rank, :subreddit
   
   def self.now 
-    puts "1. 28.5k General from black panther I shall see - by gallowboob" #"#{i}. #{title} by #{user}"
+    self.scraped
+  end
+  
+  def self.scraped
+    frontpage = [] 
     
-    post_1 = self.new 
-    post_1.title = "General from black panther I shall see"
-    post_1.upvote = "28.5k"
-    post_1.user = "gallowboob"
-    post_1.url = "https://i.redd.it/u3963s94xkl31.jpg"
+    frontpage << self.scraped_frontpage
     
-    [post_1]
+    frontpage 
+  end
+  
+  def self.scraped_frontpage
+    list = []
+    page = Nokogiri::HTML(open("https://old.reddit.com/r/all/", 'User-Agent' => 'Nooby'))
+    
+    posts = page.css("div[data-author]")
+    posts.each do |op|
+      new_post = self.new
+      new_post.user = op.css("p.tagline").css("a").first.text
+      new_post.subreddit = op.css("p.tagline").css("a")[1].text
+      new_post.title = op.css("p.title").css("a").first.text
+      new_post.rank = op.css("span.rank").first.text
+      new_post.url = op.css("p.title").css("a").first.attr("href")
+      new_post.upvote = op.css(".dislikes").first.text
+  
+      list << new_post
+    end
+    list
   end
   
   

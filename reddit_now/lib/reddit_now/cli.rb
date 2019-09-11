@@ -8,6 +8,11 @@ class RedditNow::CLI
   
   def list_posts
     @posts = RedditNow::Posts.now
+    
+    @posts[0].each do |posted, i| 
+      puts "#{posted.rank}. #{posted.upvote} Upvotes. #{posted.title} - submitted to #{posted.subreddit} by #{posted.user}"
+    end
+    
   end
   
   def menu
@@ -16,18 +21,25 @@ class RedditNow::CLI
     
       puts "Type post number to open post, list to view all posts, exit to exit"
       input = gets.strip.downcase
-      case input
-      when "list"
+      
+      if input == "list"
         list_posts
-      when "exit"
+      elsif input == "exit"
         puts "See you next time!"
         break
-      #else
-        #system("open #{@newsletter.articles[input.to_i-1].url}") 
+      elsif input.to_i > 0
+        #Launchy.open("#{RedditNow::Posts.now[0][input.to_i-1].url}") #tried to make it open url in browser but might not work becuase of IDE Browser 
+        #Launchy.open("#{@posts[0][input.to_i-1].url}")
+        #system("start #{@posts[0][input.to_i-1].url}")
+        the_post = @posts[0][input.to_i-1]
+        puts "You Chose:"
+        puts "#{the_post.rank}. #{the_post.upvote} Upvotes. #{the_post.title} - submitted to #{the_post.subreddit} by #{the_post.user}"
+        puts "Here is the link: www.reddit.com#{the_post.url}"
+      else
+        puts "Invalid Command!"
       end
     
     end
   end
   
 end
-  
